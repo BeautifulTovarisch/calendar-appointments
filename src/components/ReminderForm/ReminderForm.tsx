@@ -39,6 +39,7 @@ const styles = (theme: Theme) => createStyles({
 
 interface Props extends WithStyles<typeof styles> {
     onClose: () => void
+    addReminder: (payload: any) => void
 }
 
 const fieldPresent = (field, value) =>
@@ -48,7 +49,7 @@ const titleLength = title =>
       title.length <= 30 || "Title length must be 30 characters or fewer.";
 
 const ReminderForm = (props: Props) => {
-    const { onClose, classes } = props;
+    const { onClose, classes, addReminder } = props;
 
     const [errors, setErrors] = useState([]);
 
@@ -84,6 +85,7 @@ const ReminderForm = (props: Props) => {
 
         if (!errors.length) {
             // Call redux action to add reminder
+            addReminder({ title, time, color });
             // Close modal
             onClose();
         }
