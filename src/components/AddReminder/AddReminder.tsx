@@ -48,11 +48,7 @@ const AddReminder = (props: Props) => {
         </DialogTitle>
         <Divider light />
         <DialogContent className={ classes.addReminderFormContainer }>
-
           <ReminderForm onClose={onClose}/>
-          {/* <Typography> */}
-          {/* Form inside typography was causing issues with <form> being a descendent of <p>*/}
-          {/* </Typography> */}
         </DialogContent>
       </Dialog>
     );

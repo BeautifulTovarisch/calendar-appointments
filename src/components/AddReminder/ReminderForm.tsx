@@ -2,11 +2,13 @@
 
 import React, { useState } from 'react';
 
-import Icon from '@material-ui/core/Icon';
+import List from '@material-ui/core/List';
 import Input from '@material-ui/core/Input';
 import Button from '@material-ui/core/Button';
+import ListItem from '@material-ui/core/List';
 import FormGroup from '@material-ui/core/FormGroup';
 import TextField from '@material-ui/core/TextField';
+import EventIcon from '@material-ui/icons/Event';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import DateFnsUtils from '@date-io/date-fns';
@@ -19,6 +21,10 @@ import {
 } from 'material-ui-pickers';
 
 const styles = (theme: Theme) => createStyles({
+  error: {
+    color: '#f44336',
+    fontWeight: 500
+  },
   formInput: {
     width: '50%',
   },
@@ -35,38 +41,64 @@ interface Props extends WithStyles<typeof styles> {
     onClose: () => void
 }
 
+const fieldPresent = (field, value) =>
+      !!value || `${field} required.`;
+
+const titleLength = title =>
+      title.length <= 30 || "Title length must be 30 characters or fewer.";
+
 const ReminderForm = (props: Props) => {
     const { onClose, classes } = props;
 
-    const [error, setError] = useState([]);
+    const [errors, setErrors] = useState([]);
 
     const [title, setTitle] = useState("");
     const [color, setColor] = useState("#2196f3");
 
     // Initialize to current date and time
-    const [start, setStart] = useState(null);
+    const [time, setTime] = useState(null);
     const [end, setEnd] = useState(null);
 
     // Validation
-    // - start < end
     // - title <= 30 characters
     // - all fields present
 
-    const validateForm = ({ title, start, end, color }) => {
+    const validateForm = ({title, time, color}) => {
+        const errors = [
+            fieldPresent('Reminder Title', title),
+            fieldPresent('Reminder Time', time),
+            fieldPresent('Color', color),
 
-        return [];
+            titleLength(title)
+        ];
+
+        // Keep only error messages (filter passing tests)
+        return errors.filter(failed => failed !== true);
     };
 
     const _handleSubmit = e => {
         e.preventDefault();
-        setError(validateForm({ title, start, end, color }));
+        const errors = validateForm({ title, time, color });
 
-        onClose();
+        setErrors(errors);
+
+        if (!errors.length) {
+            // Call redux action to add reminder
+            // Close modal
+            onClose();
+        }
     };
 
     return (
         <>
-          <FormControl className={classes.formInput}>
+          <List>
+            {
+                errors.map((error, i) => (
+                    <ListItem key={i} className={classes.error}>{ error }</ListItem>
+                ))
+            }
+          </List>
+          <FormControl className={classes.formInput} required={true}>
             <InputLabel htmlFor='reminder-title'>Title or Event</InputLabel>
             <Input
               id='reminder-title'
@@ -79,21 +111,13 @@ const ReminderForm = (props: Props) => {
               aria-describedby="Reminder Title" />
           </FormControl>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <FormControl required={true} className={classes.formInput}>
+            <FormControl className={classes.formInput}>
               <DateTimePicker
-                id='reminder-start-date'
-                name='reminder-start-date'
-                value={start}
-                emptyLabel='Reminder Start'
-                onChange={ time => setStart(time) } />
-            </FormControl>
-            <FormControl required={true} className={classes.formInput}>
-              <DateTimePicker
-                id='reminder-end-date'
-                name='reminder-end-date'
-                value={end}
-                emptyLabel='Reminder End'
-                onChange={ time => setEnd(time) } />
+                id='reminder-date'
+                name='reminder-date'
+                value={time}
+                emptyLabel='Reminder Date/Time'
+                onChange={ time => setTime(time) } />
             </FormControl>
           </MuiPickersUtilsProvider>
           <FormControl>
