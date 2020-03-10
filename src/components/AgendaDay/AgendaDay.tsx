@@ -8,60 +8,76 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography'
 import { WithStyles, withStyles, Theme, createStyles } from '@material-ui/core/styles';
 
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+
 import * as dateFns from 'date-fns';
 
 const styles = (theme: Theme) => createStyles({
-	remindersContainer: {
-		minHeight: '250px',
-		marginTop: '10px'
-	},
-	closeButton: {
-		position: 'absolute',
-		right: '10px',
-		top: '10px'
-	},
-	toolbarButtonHidden: {
-		visibility: 'hidden'
-	},
-	toolbarButtonVisible: {
-		visibility: 'visible'
-	}
+  remindersContainer: {
+    minHeight: '250px',
+    marginTop: '10px'
+  },
+  closeButton: {
+    position: 'absolute',
+    right: '10px',
+    top: '10px'
+  },
+  toolbarButtonHidden: {
+    visibility: 'hidden'
+  },
+  toolbarButtonVisible: {
+    visibility: 'visible'
+  }
 });
 
 interface Props extends WithStyles<typeof styles>{
-	agendaStatus: {
-		isOpen: boolean,
-		date: Date
-	}
-	onClose: () => void
+  agendaStatus: {
+    isOpen: boolean,
+    date: Date
+  }
+  onClose: () => void,
+  reminders: Array<any>
 }
 
 const AgendaDay = (props: Props) => {
-	const { classes, agendaStatus, onClose } = props;
-	const dateTitle = agendaStatus.date ? dateFns.format( agendaStatus.date, 'LLLL do, yyyy' ) : 'Closing'
+  const { classes, agendaStatus, reminders, onClose } = props;
+  const dateTitle = agendaStatus.date ? dateFns.format( agendaStatus.date, 'LLLL do, yyyy' ) : 'Closing'
 
-	return (
-		<Dialog
-			open={ agendaStatus.isOpen }
-			onClose={ onClose }
-			aria-labelledby='form-dialog-title'
-			fullWidth={ true }
-			maxWidth='md'
-		>
-			<DialogTitle id='form-dialog-title'>
-				{ dateTitle }
-				<IconButton aria-label='Close' className={ classes.closeButton } onClick={ onClose }>
-					<CloseIcon />
-				</IconButton>
-			</DialogTitle>
-			<Divider light />
-			<DialogContent className={ classes.remindersContainer }>
-				<Typography>
-					Use this space to list the reminders.
-				</Typography>
-			</DialogContent>
-		</Dialog>
-	);
+    const todaysReminders = reminders.filter(
+        rem => dateFns.getDate(rem.time) === dateFns.getDate(agendaStatus.date)
+            && dateFns.getMonth(rem.time) === dateFns.getMonth(agendaStatus.date)
+    ).sort((first, second) => first.time < second.time ? -1 : 1);
+
+  return (
+    <Dialog
+      open={ agendaStatus.isOpen }
+      onClose={ onClose }
+      aria-labelledby='form-dialog-title'
+      fullWidth={ true }
+      maxWidth='md'
+    >
+      <DialogTitle id='form-dialog-title'>
+        { dateTitle }
+        <IconButton aria-label='Close' className={ classes.closeButton } onClick={ onClose }>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <Divider light />
+      <DialogContent className={ classes.remindersContainer }>
+        <List>
+          {
+              todaysReminders.length ? todaysReminders.map(({title, time}, i) => (
+                  <ListItem key={i}>
+                    <ListItemText>{title}: {time.toLocaleTimeString()}</ListItemText>
+                  </ListItem>
+              )) : <Typography>No Reminders</Typography>
+          }
+        </List>
+      </DialogContent>
+    </Dialog>
+  );
 }
 
 export default withStyles( styles )( AgendaDay );

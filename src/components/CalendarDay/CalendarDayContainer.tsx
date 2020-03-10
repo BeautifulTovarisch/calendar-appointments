@@ -7,7 +7,7 @@ interface Props {
 }
 
 interface State {
-
+  reminders: Array<any>
 }
 
 interface DateObj {
