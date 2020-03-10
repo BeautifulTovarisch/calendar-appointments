@@ -46,18 +46,18 @@ function addReminderStatus( state = initialAddReminderState, action: any ) {
   }
 }
 
-function currentReminders( state = {reminders: []}, action: any ) {
+function reminders( state = [], action: any ) {
   switch(action.type) {
       case ADD_REMINDER:
-          return { reminders: [...state.reminders, action.reminder] }
+          return [...state, action.reminder]
       default: return state
   }
 }
 
 const calendarApp = combineReducers( {
+  reminders,
   agendaStatus,
   addReminderStatus,
-  currentReminders
 } )
 
 export default calendarApp;

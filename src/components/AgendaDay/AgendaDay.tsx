@@ -11,57 +11,57 @@ import { WithStyles, withStyles, Theme, createStyles } from '@material-ui/core/s
 import * as dateFns from 'date-fns';
 
 const styles = (theme: Theme) => createStyles({
-	remindersContainer: {
-		minHeight: '250px',
-		marginTop: '10px'
-	},
-	closeButton: {
-		position: 'absolute',
-		right: '10px',
-		top: '10px'
-	},
-	toolbarButtonHidden: {
-		visibility: 'hidden'
-	},
-	toolbarButtonVisible: {
-		visibility: 'visible'
-	}
+  remindersContainer: {
+    minHeight: '250px',
+    marginTop: '10px'
+  },
+  closeButton: {
+    position: 'absolute',
+    right: '10px',
+    top: '10px'
+  },
+  toolbarButtonHidden: {
+    visibility: 'hidden'
+  },
+  toolbarButtonVisible: {
+    visibility: 'visible'
+  }
 });
 
 interface Props extends WithStyles<typeof styles>{
-	agendaStatus: {
-		isOpen: boolean,
-		date: Date
-	}
-	onClose: () => void
+  agendaStatus: {
+    isOpen: boolean,
+    date: Date
+  }
+  onClose: () => void
 }
 
 const AgendaDay = (props: Props) => {
-	const { classes, agendaStatus, onClose } = props;
-	const dateTitle = agendaStatus.date ? dateFns.format( agendaStatus.date, 'LLLL do, yyyy' ) : 'Closing'
+  const { classes, agendaStatus, onClose } = props;
+  const dateTitle = agendaStatus.date ? dateFns.format( agendaStatus.date, 'LLLL do, yyyy' ) : 'Closing'
 
-	return (
-		<Dialog
-			open={ agendaStatus.isOpen }
-			onClose={ onClose }
-			aria-labelledby='form-dialog-title'
-			fullWidth={ true }
-			maxWidth='md'
-		>
-			<DialogTitle id='form-dialog-title'>
-				{ dateTitle }
-				<IconButton aria-label='Close' className={ classes.closeButton } onClick={ onClose }>
-					<CloseIcon />
-				</IconButton>
-			</DialogTitle>
-			<Divider light />
-			<DialogContent className={ classes.remindersContainer }>
-				<Typography>
-					Use this space to list the reminders.
-				</Typography>
-			</DialogContent>
-		</Dialog>
-	);
+  return (
+    <Dialog
+      open={ agendaStatus.isOpen }
+      onClose={ onClose }
+      aria-labelledby='form-dialog-title'
+      fullWidth={ true }
+      maxWidth='md'
+    >
+      <DialogTitle id='form-dialog-title'>
+        { dateTitle }
+        <IconButton aria-label='Close' className={ classes.closeButton } onClick={ onClose }>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <Divider light />
+      <DialogContent className={ classes.remindersContainer }>
+        <Typography>
+          Use this space to list the reminders.
+        </Typography>
+      </DialogContent>
+    </Dialog>
+  );
 }
 
 export default withStyles( styles )( AgendaDay );
