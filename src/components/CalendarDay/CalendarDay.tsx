@@ -58,6 +58,10 @@ const styles = (theme: Theme) => createStyles({
   },
   remindersContainer: {
     height: '100%'
+  },
+  reminder: {
+    width: '100%',
+    padding: 0
   }
 });
 
@@ -88,7 +92,7 @@ const CalendarDay = (props: Props) => {
   const todaysReminders = reminders.filter(
       rem => isSameMonth(rem.time, dateObj.date)
           && isSameDay(rem.time, dateObj.date)
-  );
+  ).sort((first, second) => first.time < second.time ? -1 : 1);
 
   return (
     <div
@@ -106,8 +110,13 @@ const CalendarDay = (props: Props) => {
         <List>
           {
               todaysReminders.map(({title, time, color}, i) => (
-                  <ListItem key={i}>
-                    <ListItemText>{title}</ListItemText>
+                  <ListItem key={i} className={classes.reminder}>
+                    <ListItemText
+                      style={{backgroundColor: color, marginBottom: '2px', padding: '2.5px'}}>
+                      <span style={{color: 'white'}}>
+                        {time.toLocaleTimeString()} - {title}
+                      </span>
+                    </ListItemText>
                   </ListItem>
               ))
           }
