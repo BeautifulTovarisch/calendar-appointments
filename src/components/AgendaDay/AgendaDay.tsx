@@ -8,6 +8,10 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography'
 import { WithStyles, withStyles, Theme, createStyles } from '@material-ui/core/styles';
 
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+
 import * as dateFns from 'date-fns';
 
 const styles = (theme: Theme) => createStyles({
@@ -33,12 +37,18 @@ interface Props extends WithStyles<typeof styles>{
     isOpen: boolean,
     date: Date
   }
-  onClose: () => void
+  onClose: () => void,
+  reminders: Array<any>
 }
 
 const AgendaDay = (props: Props) => {
-  const { classes, agendaStatus, onClose } = props;
+  const { classes, agendaStatus, reminders, onClose } = props;
   const dateTitle = agendaStatus.date ? dateFns.format( agendaStatus.date, 'LLLL do, yyyy' ) : 'Closing'
+
+    const todaysReminders = reminders.filter(
+        rem => dateFns.getDate(rem.time) === dateFns.getDate(agendaStatus.date)
+            && dateFns.getMonth(rem.time) === dateFns.getMonth(agendaStatus.date)
+    ).sort((first, second) => first.time < second.time ? -1 : 1);
 
   return (
     <Dialog
@@ -56,9 +66,15 @@ const AgendaDay = (props: Props) => {
       </DialogTitle>
       <Divider light />
       <DialogContent className={ classes.remindersContainer }>
-        <Typography>
-          Use this space to list the reminders.
-        </Typography>
+        <List>
+          {
+              todaysReminders.length ? todaysReminders.map(({title, time}, i) => (
+                  <ListItem key={i}>
+                    <ListItemText>{title}: {time.toLocaleTimeString()}</ListItemText>
+                  </ListItem>
+              )) : <Typography>No Reminders</Typography>
+          }
+        </List>
       </DialogContent>
     </Dialog>
   );
