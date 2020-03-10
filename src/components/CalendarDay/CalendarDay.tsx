@@ -5,6 +5,7 @@ import { WithStyles, withStyles, Theme, createStyles } from '@material-ui/core/s
 import { isSameMonth, isSameDay, getDate } from 'date-fns';
 
 import List from '@material-ui/core/List';
+import Button from '@material-ui/core/Button';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
@@ -110,16 +111,19 @@ const CalendarDay = (props: Props) => {
         <List>
           {
               todaysReminders.map(({title, time, color}, i) => (
-                  <ListItem key={i} className={classes.reminder}>
-                    <ListItemText
-                      style={{backgroundColor: color, marginBottom: '2px', padding: '2.5px'}}>
-                      <span style={{color: 'white'}}>
-                        {time.toLocaleTimeString()} - {title}
-                      </span>
-                    </ListItemText>
-                  </ListItem>
+                  i < 3 ? (
+                      <ListItem key={i} className={classes.reminder}>
+                        <ListItemText
+                          style={{backgroundColor: color, marginBottom: '2px', padding: '2.5px'}}>
+                          <span style={{color: 'white'}}>
+                            {time.toLocaleTimeString()} - {title}
+                          </span>
+                        </ListItemText>
+                      </ListItem>
+                  ) : null
               ))
           }
+          { todaysReminders.length >= 3 && <Button color='primary'>More Reminders</Button>}
         </List>
       </div>
     </div>
